@@ -43,5 +43,13 @@ module FileScans
 		def name
 			@folder.name
 		end
+
+		def path
+			@folder.path
+		end
+
+		def target
+			@folder.target
+		end
 	end
 end
