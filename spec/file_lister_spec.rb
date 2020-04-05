@@ -1,5 +1,4 @@
 require_relative '../lib/file_lister'
-# require_relative '../lib/scan_result'
 require_relative '../lib/folder'
 
 include FileScans
