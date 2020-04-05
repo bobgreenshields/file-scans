@@ -25,5 +25,9 @@ module FileScans
 			to_file_str = %W(> #{name})
 			(find_str + cut_str + sort_str + to_file_str).join(' ')
 		end
+
+		def call
+			`#{cmd_str}`
+		end
 	end
 end
