@@ -7,10 +7,6 @@ module FileScans
 
 		def initialize(folder)
 			@folder = folder
-			# @root = Pathname.new(root)
-			# @target = Pathname.new(target)
-			# @files = []
-			# @new_dirs = []
 			@result = ScanResult.new(@folder)
 			on_file = ->(file, context) { context.add_file(file) }
 			on_dir = ->(dir, context) { context.add_dir_if_new(dir) }
@@ -34,7 +30,7 @@ module FileScans
 			@result.add_new_dir(dir_str) unless (target + dir_str).directory?
 		end
 
-		def scan
+		def call
 			@explorer.call(root)
 			@result
 		end
