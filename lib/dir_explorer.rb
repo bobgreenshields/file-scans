@@ -1,4 +1,4 @@
-module Filer2
+module FileScans
 	class DirExplorer
 
 		def initialize(on_file: ->(file, context) {}, on_dir: ->(dir, context) {}, recursive: true, context: nil)
