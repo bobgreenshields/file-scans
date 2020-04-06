@@ -11,11 +11,13 @@ module FileScans
 		def add_file(file)
 			@files << file
 			@files_dirty = true
+			self
 		end
 
 		def add_new_dir(dir)
 			@new_dirs << dir
 			@new_dirs_dirty = true
+			self
 		end
 
 		def new_dirs
