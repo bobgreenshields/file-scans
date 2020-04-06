@@ -28,7 +28,9 @@ module FileScans
 		def load_folder(folder_hash)
 			exit_missing_config_key("name") unless config_hash.key?('name')
 			exit_missing_config_key("target") unless config_hash.key?('target')
-			@folders << Folder.new(name: config_hash["name"], target: config_hash["target"], 
+			target = Pathname.new(name: config_hash["name"])
+			exit_folder_target_not_exist(target) unless target.exist?
+			@folders << Folder.new(name: config_hash["name"], target: target, 
 														 cloudroot: @cloudroot)
 			self
 		end
