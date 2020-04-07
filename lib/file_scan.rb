@@ -4,6 +4,8 @@ require_relative 'folder'
 
 module FileScans
 	class FileScan
+		attr_reader :cloudroot
+
 		def initialize
 			@folders = []
 		end
@@ -19,18 +21,24 @@ module FileScans
 
 		def load_folders
 			exit_if_config_key_missing("cloudroot")
-			@cloudroot = Pathname.new(@config_hash['cloudroot'])
-			exit_cloudroot_not_exist unless cloudroot.directory?
+			# @cloudroot = Pathname.new(config_hash['cloudroot'])
+			puts "cloudroot is"
+			 # puts config_hash['cloudroot']
+			# @cloudroot = "hello"
+			@cloudroot = Pathname.new(config_hash['cloudroot'])
+			puts @cloudroot.to_s
+			puts "config is #{config_hash['cloudroot']}"
+			# exit_cloudroot_not_exist unless cloudroot.directory?
 			exit_if_config_key_missing("folders")
-			@config_hash['folders'].each { | folder_hash | load_folder(folder_hash) }
+			config_hash['folders'].each { | folder_hash | load_folder(folder_hash) }
 		end
 
 		def load_folder(folder_hash)
-			exit_if_config_key_missing("name")
-			exit_if_config_key_missing("target")
-			target = Pathname.new(name: @config_hash["name"])
+			# exit_if_config_key_missing("name")
+			# exit_if_config_key_missing("target")
+			target = Pathname.new(folder_hash["target"])
 			exit_folder_target_not_exist(target) unless target.exist?
-			@folders << Folder.new(name: @config_hash["name"], target: target, 
+			@folders << Folder.new(name: folder_hash["name"], target: target, 
 														 cloudroot: @cloudroot)
 			self
 		end
@@ -43,7 +51,7 @@ module FileScans
 		end
 
 		def exit_if_config_key_missing(key)
-			return if @config_hash.key?(key)
+			return if config_hash.key?(key)
 			STDERR.puts "Looking in the config file for a key called #{key}"
 			STDERR.puts "but none could be found"
 			exit(66)
