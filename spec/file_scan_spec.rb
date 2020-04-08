@@ -9,7 +9,10 @@ describe FileScan do
 			folders = [ {'name' => 'inv', 'target' => '/mnt/inv'},
 				{'name' => 'fin', 'target' => '/mnt/fin'} ]
 			fs = FileScan.new
-			fs.load_folder(folders[0])
+			allow(fs).to receive(:exit_folder_target_not_exist)
+			fs.load_folder(folder_hash: folders[0], cloudroot: '/dev/builder')
+			fs.load_folder(folder_hash: folders[1], cloudroot: '/dev/builder')
+			expect(fs.folders.map(&:name)).to eql(['inv', 'fin'])
 			
 		end
 	end
@@ -21,12 +24,8 @@ describe FileScan do
 			}
 			fs = FileScan.new
 			allow(fs).to receive(:config_hash).and_return(config)
-			# allow(fs).to receive(:exit_cloudroot_not_exist)
-			# allow(fs).to receive(:load_folders)
-			# expect(fs.config_hash).to be_a Hash
-			# expect(fs.config_hash['folders']).to be_a Array
-			# expect(fs.config_hash['cloudroot']).to eql '/home/bobg/ncfiling'
-			# expect(fs.cloudroot).to be_a Pathname
+			allow(fs).to receive(:exit_cloudroot_not_exist)
+			allow(fs).to receive(:exit_folder_target_not_exist)
 			fs.load_folders
 			expect(fs.cloudroot.to_s).to eql('/home/bobg/ncfiling')
 			

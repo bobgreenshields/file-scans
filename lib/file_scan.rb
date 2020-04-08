@@ -21,26 +21,26 @@ module FileScans
 
 		def load_folders
 			exit_if_config_key_missing("cloudroot")
-			# @cloudroot = Pathname.new(config_hash['cloudroot'])
-			puts "cloudroot is"
-			 # puts config_hash['cloudroot']
-			# @cloudroot = "hello"
 			@cloudroot = Pathname.new(config_hash['cloudroot'])
-			puts @cloudroot.to_s
-			puts "config is #{config_hash['cloudroot']}"
-			# exit_cloudroot_not_exist unless cloudroot.directory?
+			exit_cloudroot_not_exist unless cloudroot.directory?
 			exit_if_config_key_missing("folders")
-			config_hash['folders'].each { | folder_hash | load_folder(folder_hash) }
+			config_hash['folders'].each { | folder_hash | load_folder(folder_hash: folder_hash,
+																																cloudroot: @cloudroot) }
 		end
 
-		def load_folder(folder_hash)
-			# exit_if_config_key_missing("name")
-			# exit_if_config_key_missing("target")
+		def load_folder(folder_hash: , cloudroot: )
+			exit_if_folder_key_missing(key: "name", hash: folder_hash)
+			exit_if_folder_key_missing(key: "target", hash: folder_hash)
 			target = Pathname.new(folder_hash["target"])
 			exit_folder_target_not_exist(target) unless target.exist?
-			@folders << Folder.new(name: folder_hash["name"], target: target, 
-														 cloudroot: @cloudroot)
+			@folders << Folder.new(name: folder_hash["name"], target: target,
+														 cloudroot: cloudroot)
 			self
+		end
+
+		def folders
+			return enum_for(:folders) unless block_given?
+			@folders.each { |folder| yield folder}
 		end
 
 		def exit_no_rc
@@ -67,6 +67,13 @@ module FileScans
 			STDERR.puts "Looking for the target directory"
 			STDERR.puts "at #{target} but it could not be found"
 			exit(68)
+		end
+
+		def exit_if_folder_key_missing(key: ,hash:)
+			return if hash.key?(key)
+			STDERR.puts "Looking in the folder info for a key called #{key}"
+			STDERR.puts "but none could be found"
+			exit(69)
 		end
 	end
 
