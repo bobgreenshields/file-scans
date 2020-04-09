@@ -10,6 +10,8 @@ module FileScans
 		def initialize(config_hash)
 			@config_hash = config_hash
 			@folders = []
+			@cloudroot = nil
+			load_folders
 		end
 
 		def cloudroot
@@ -21,14 +23,18 @@ module FileScans
 
 		def dirs
 			folders do |folder|
-				sr = Scanner.new(folder).call
-				if sr.files?
-					STDERR.puts "Cloud folder #{folder.path} contains files"
-					STDERR.puts "please empty it before it can be rebuilt"
-				else
-					STDERR.puts "Building cloud folder #{folder.path}"
-					DirBuilder.new(folder).call
+				if folder.path.exist?
+					if Scanner.new(folder).call.files?
+						STDERR.puts "Cloud folder #{folder.path} contains files"
+						STDERR.puts "please empty it before it can be rebuilt"
+						return
+					else
+						folder.path.rmtree
+					end
 				end
+				STDERR.puts "Building cloud folder #{folder.path}"
+				DirBuilder.new(folder).call
+				return
 			end
 		end
 
@@ -57,7 +63,7 @@ module FileScans
 		end
 
 		def exit_if_dir_not_exist(name: ,dir:)
-			dir_path = Pathname.new(path)
+			dir_path = Pathname.new(dir)
 			return if dir_path.directory?
 			STDERR.puts "Looking for #{name} at #{path}"
 			if dir_path.exist?
