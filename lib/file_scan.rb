@@ -34,7 +34,6 @@ module FileScans
 				end
 				STDERR.puts "Building cloud folder #{folder.path}"
 				DirBuilder.new(folder).call
-				return
 			end
 		end
 
