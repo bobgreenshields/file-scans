@@ -1,11 +1,12 @@
 require 'pathname'
-require 'yaml'
+# require 'yaml'
 require_relative 'folder'
+require_relative 'scanner'
+require_relative 'dir_builder'
+require_relative 'file_lister'
 
 module FileScans
 	class FileScan
-		attr_reader :cloudroot
-
 		def initialize(config_hash)
 			@config_hash = config_hash
 			@folders = []
@@ -16,6 +17,26 @@ module FileScans
 			@cloudroot = Pathname.new(@config_hash['cloudroot'])
 			exit_if_dir_not_exist(name: "cloud dir", dir: @cloudroot)
 			@cloudroot
+		end
+
+		def dirs
+			folders do |folder|
+				sr = Scanner.new(folder).call
+				if sr.files?
+					STDERR.puts "Cloud folder #{folder.path} contains files"
+					STDERR.puts "please empty it before it can be rebuilt"
+				else
+					STDERR.puts "Building cloud folder #{folder.path}"
+					DirBuilder.new(folder).call
+				end
+			end
+		end
+
+		def files
+			folders do |folder|
+				STDERR.puts "Listing files from #{folder.target} into #{folder.name}.txt"
+				FileLister.new(folder).call
+			end
 		end
 
 		def load_folders
