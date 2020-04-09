@@ -26,7 +26,7 @@ module FileScans
 			name = folder_hash["name"]
 			target = Pathname.new(folder_hash["target"])
 			exit_if_dir_not_exist(name: "the target of folder #{name}", dir: target)
-			@folders << Folder.new(name: folder_hash["name"], target: target, cloudroot: cloudroot)
+			@folders << Folder.new(name: name, target: target, cloudroot: cloudroot)
 			self
 		end
 
