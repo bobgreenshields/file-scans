@@ -2,7 +2,7 @@ require 'pathname'
 
 module FileScans
 	class Folder
-		attr_reader :name, :target, :files_list
+		attr_reader :name, :target
 
 		def initialize(name: , cloudroot: , target: )
 			@name = name
