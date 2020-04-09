@@ -4,6 +4,7 @@ require_relative 'folder'
 require_relative 'scanner'
 require_relative 'dir_builder'
 require_relative 'file_lister'
+require_relative 'default_scan_formatter'
 
 module FileScans
 	class FileScan
@@ -11,6 +12,7 @@ module FileScans
 			@config_hash = config_hash
 			@folders = []
 			@cloudroot = nil
+			@formatter = DefaultScanFormatter
 			load_folders
 		end
 
@@ -42,6 +44,16 @@ module FileScans
 				STDERR.puts "Listing files from #{folder.target} into #{folder.name}.txt"
 				FileLister.new(folder).call
 			end
+		end
+
+		def scan
+			formatter = @formatter.new
+			folders do |folder|
+				STDERR.puts "==== Scanning folder #{folder.name} ===="
+				sr = Scanner.new(folder).call
+				STDERR.puts formatter.call(sr)
+			end
+
 		end
 
 		def load_folders
