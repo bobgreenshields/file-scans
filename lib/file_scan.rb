@@ -11,37 +11,50 @@ module FileScans
 		def initialize(config_hash)
 			@config_hash = config_hash
 			@folders = nil
-			# @folders = []
 			@cloudroot = nil
 			@formatter = DefaultScanFormatter
-			# load_folders
 		end
 
 		def cloudroot
 			return @cloudroot if @cloudroot
 			@cloudroot = Pathname.new(@config_hash['cloudroot'])
 			exit_if_dir_not_exist(name: "cloud dir", dir: @cloudroot)
-			exit_if_dir_not_exist(name: "cloud dir", dir: @cloudroot)
 			@cloudroot
 		end
 
+		def cloudpath(path_or_str)
+			path = Pathname.new(path_or_str)
+			path.relative_path_from(cloudroot)
+		end
+
+		def call(options)
+			options.delete(:scan) if options.include?(:move)
+			%i(files build_dirs move scan).each do |method_name|
+				self.send(method_name) if options.include?(method_name)
+			end
+		end
+
 		def build_dirs
+			STDERR.puts
 			folders do |folder|
 				if folder.path.exist?
 					if Scanner.new(folder).call.files?
-						STDERR.puts "Cloud folder #{folder.path} contains files"
+						STDERR.puts "Cloud folder #{cloudpath(folder.path)} contains files"
 						STDERR.puts "please empty it before it can be rebuilt"
-						return
+						STDERR.puts
+						next
 					else
 						folder.path.rmtree
 					end
 				end
-				STDERR.puts "Building cloud folder #{folder.path}"
+				STDERR.puts "Building cloud folder #{cloudpath(folder.path)}"
+				STDERR.puts
 				DirBuilder.new(folder).call
 			end
 		end
 
 		def files
+			STDERR.puts
 			folders do |folder|
 				STDERR.puts "Listing files from #{folder.target} into #{folder.name}.txt"
 				FileLister.new(folder).call
@@ -49,13 +62,17 @@ module FileScans
 		end
 
 		def scan
+			STDERR.puts
 			formatter = @formatter.new
 			folders do |folder|
 				STDERR.puts "==== Scanning folder #{folder.name} ===="
 				sr = Scanner.new(folder).call
 				STDERR.puts formatter.call(sr)
 			end
+		end
 
+		def move
+			puts "MOVE called"
 		end
 
 		def load_folder(folder_hash)
