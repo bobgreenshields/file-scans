@@ -10,20 +10,22 @@ module FileScans
 	class FileScan
 		def initialize(config_hash)
 			@config_hash = config_hash
-			@folders = []
+			@folders = nil
+			# @folders = []
 			@cloudroot = nil
 			@formatter = DefaultScanFormatter
-			load_folders
+			# load_folders
 		end
 
 		def cloudroot
 			return @cloudroot if @cloudroot
 			@cloudroot = Pathname.new(@config_hash['cloudroot'])
 			exit_if_dir_not_exist(name: "cloud dir", dir: @cloudroot)
+			exit_if_dir_not_exist(name: "cloud dir", dir: @cloudroot)
 			@cloudroot
 		end
 
-		def dirs
+		def build_dirs
 			folders do |folder|
 				if folder.path.exist?
 					if Scanner.new(folder).call.files?
@@ -56,19 +58,15 @@ module FileScans
 
 		end
 
-		def load_folders
-			@config_hash['folders'].each { | folder_hash | load_folder(folder_hash)}
-		end
-
 		def load_folder(folder_hash)
 			name = folder_hash["name"]
 			target = Pathname.new(folder_hash["target"])
 			exit_if_dir_not_exist(name: "the target of folder #{name}", dir: target)
-			@folders << Folder.new(name: name, target: target, cloudroot: cloudroot)
-			self
+			Folder.new(name: name, target: target, cloudroot: cloudroot)
 		end
 
 		def folders
+			@folders ||= @config_hash['folders'].map { |folder_hash| load_folder(folder_hash) }
 			return enum_for(:folders) unless block_given?
 			@folders.each { |folder| yield folder}
 		end

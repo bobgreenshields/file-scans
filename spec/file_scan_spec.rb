@@ -23,24 +23,26 @@ describe FileScan do
 	end
 
 	describe '#load_folder' do
-		it 'loads a folder' do
+		it 'returns a Folder' do
 			folders = config['folders']
-			fs.load_folder(folders[0])
-			fs.load_folder(folders[1])
-			expect(fs.folders.map(&:name)).to eql(['inv', 'fin'])
-			expect(fs.folders.map(&:target).map(&:to_s)).to eql(['/mnt/inv', '/mnt/fin'])
+			expect(fs.load_folder(folders[0])).to be_a Folder
+		end
+		it 'populates the folder with the correct values' do
+			folders = config['folders']
+			folder = fs.load_folder(folders[0])
+			expect(folder.name).to eql 'inv'
+			expect(folder.target.to_s).to eql '/mnt/inv'
 		end
 	end
 
-	describe '#load_folders' do
-		it 'sets the cloudroot' do
-			fs.load_folders
-			expect(fs.cloudroot.to_s).to eql('/home/bobg/ncfiling')
-		end
+	describe '#folders' do
 		it 'loads the folders' do
-			fs.load_folders
 			expect(fs.folders.map(&:name)).to eql(['inv', 'fin'])
 			expect(fs.folders.map(&:target).map(&:to_s)).to eql(['/mnt/inv', '/mnt/fin'])
+		end
+		it 'returns the folders enumerator' do
+			expect(fs.folders).to be_a Enumerator
+			expect(fs.folders.map(&:name)).to eql(['inv', 'fin'])
 		end
 	end
 	
