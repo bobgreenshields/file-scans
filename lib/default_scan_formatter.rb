@@ -5,13 +5,15 @@ module FileScans
 			result = []
 			result += new_dirs(scan_result)
 			result += files(scan_result)
+			result += duplicates(scan_result)
+			result += ["\n"]
 			result.join("\n")
 		end
 
 		def files(scan_result)
 			case scan_result.files.count
 			when 0
-				["\nThere are no files to move"] << "\n"
+				["\nThere are no files to move"]
 			when 1
 				result = ["\nThere is one file"]
 				result += scan_result.files.map(&:to_s)
@@ -19,7 +21,6 @@ module FileScans
 			else
 				result = ["\nThere are #{scan_result.files.count} files"]
 				result += scan_result.files.map(&:to_s)
-				result << "\n"
 			end
 		end
 
