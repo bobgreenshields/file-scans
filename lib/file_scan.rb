@@ -53,6 +53,8 @@ module FileScans
 			end
 		end
 
+
+
 		def files
 			STDERR.puts
 			folders do |folder|
@@ -72,7 +74,24 @@ module FileScans
 		end
 
 		def move
-			puts "MOVE called"
+			STDERR.puts
+			formatter = @formatter.new
+			folders do |folder|
+				STDERR.puts "==== Scanning folder #{folder.name} ===="
+				sr = Scanner.new(folder).call
+				STDERR.puts formatter.call(sr)
+				sr.files do |file|
+					move_file(file_relative: file, source_dir: folder.path, target_dir: folder.target)
+					STDERR.puts "Moving #{file}"
+				end
+			end
+		end
+
+		def move_file(file_relative: , source_dir: , target_dir: )
+			target_path = Pathname.new(target_dir) + file_relative
+			raise StdError, "Copying file to #{target_path} but it already exists!" if target_path.exist?
+			# (Pathname.new(source) + file_relative).rename(target_path)
+			# Pathname.new(source).rename(target)
 		end
 
 		def load_folder(folder_hash)
@@ -91,7 +110,7 @@ module FileScans
 		def exit_if_dir_not_exist(name: ,dir:)
 			dir_path = Pathname.new(dir)
 			return if dir_path.directory?
-			STDERR.puts "Looking for #{name} at #{path}"
+			STDERR.puts "Looking for #{name} at #{dir_path}"
 			if dir_path.exist?
 				STDERR.puts "It is not a directory"
 			else
