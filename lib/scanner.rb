@@ -22,7 +22,16 @@ module FileScans
 		end
 
 		def add_file(file)
-			@result.add_file(file.relative_path_from(root).to_s)
+			file_relative_path = file.relative_path_from(root).to_s
+			if target_file_exist?(file_relative_path)
+				@result.add_duplicate(file_relative_path)
+			else
+				@result.add_file(file_relative_path)
+			end
+		end
+
+		def target_file_exist?(file_relative_path)
+			(@folder.target + file_relative_path).exist?
 		end
 
 		def add_dir_if_new(dir)
