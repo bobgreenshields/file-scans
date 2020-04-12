@@ -38,6 +38,19 @@ module FileScans
 			end
 		end
 
+		def duplicates(scan_result)
+			case scan_result.duplicates.count
+			when 0
+				["\nThere are no duplicated file names"]
+			when 1
+				result = ["\nThere is one filename which already exists in the target dir"]
+				result += scan_result.duplicates.map(&:to_s)
+			else
+				result = ["\nThere are #{scan_result.duplicates.count} filenames which already exist in the target dir"]
+				result += scan_result.duplicates.map(&:to_s)
+			end
+		end
+
 	end
 	
 end
