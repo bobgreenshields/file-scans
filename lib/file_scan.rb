@@ -35,6 +35,22 @@ module FileScans
 			end
 		end
 
+		def sync_dirs
+			STDERR.puts
+			folders do |folder|
+				folder.path.mkpath unless folder.path.exist?
+				NewDirScanner.new(folder).call.new_dirs do |new_dir|
+					new_dir_path = folder.path + new_dir
+					if new_dir_path.exist?
+						STDERR.puts "Was going to make #{new_dir} in folder #{folder.name} but it already exists"
+					else
+						new_dir_path.mkpath
+						STDERR.puts "Making #{new_dir} in folder #{folder.name}"
+					end
+				end
+			end
+		end
+
 		def rebuild_dirs
 			STDERR.puts
 			folders do |folder|
