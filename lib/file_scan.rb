@@ -2,6 +2,7 @@ require 'pathname'
 # require 'yaml'
 require_relative 'folder'
 require_relative 'scanner'
+require_relative 'new_dir_scanner'
 require_relative 'dir_builder'
 require_relative 'file_lister'
 require_relative 'default_scan_formatter'
@@ -29,12 +30,12 @@ module FileScans
 
 		def call(options)
 			options.delete(:scan) if options.include?(:move)
-			%i(files build_dirs move scan).each do |method_name|
+			%i(files sync_dirs rebuild_dirs move scan).each do |method_name|
 				self.send(method_name) if options.include?(method_name)
 			end
 		end
 
-		def build_dirs
+		def rebuild_dirs
 			STDERR.puts
 			folders do |folder|
 				if folder.path.exist?
