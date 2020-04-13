@@ -1,4 +1,4 @@
-require_relative '../lib/new-dir-scanner'
+require_relative '../lib/new_dir_scanner'
 require_relative '../lib/scan_result'
 require_relative '../lib/folder'
 
