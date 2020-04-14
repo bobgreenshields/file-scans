@@ -84,6 +84,7 @@ module FileScans
 			STDERR.puts
 			formatter = @formatter.new
 			folders do |folder|
+				exit_if_dir_not_exist(name: "the cloud folder #{folder.name}", dir: folder.path)
 				STDERR.puts "==== Scanning folder #{folder.name} ===="
 				sr = Scanner.new(folder).call
 				STDERR.puts formatter.call(sr)
@@ -94,6 +95,7 @@ module FileScans
 			STDERR.puts
 			formatter = @formatter.new
 			folders do |folder|
+				exit_if_dir_not_exist(name: "the cloud folder #{folder.name}", dir: folder.path)
 				STDERR.puts "==== Scanning folder #{folder.name} ===="
 				sr = Scanner.new(folder).call
 				STDERR.puts formatter.call(sr)
@@ -105,10 +107,14 @@ module FileScans
 		end
 
 		def move_file(file_relative: , source_dir: , target_dir: )
+			source_path = Pathname.new(source_dir) + file_relative
 			target_path = Pathname.new(target_dir) + file_relative
-			raise StdError, "Copying file to #{target_path} but it already exists!" if target_path.exist?
-			# (Pathname.new(source) + file_relative).rename(target_path)
-			# Pathname.new(source).rename(target)
+			raise RuntimeError,
+				"Wanting to move file from #{source_path} but it doesn't exist!" \
+				unless source_path.exist?
+			raise RuntimeError,
+				"Wanting to move file to #{target_path} but it already exists!" \
+				if target_path.exist?
 		end
 
 		def load_folder(folder_hash)
@@ -133,42 +139,8 @@ module FileScans
 			else
 				STDERR.puts "It does not exist"
 			end
-			exit(70)
+			exit(72)
 		end
 
-		# def exit_no_rc
-		# 	STDERR.puts "Was expecting to find a config file called .filescan"
-		# 	STDERR.puts "at #{@rcfile}"
-		# 	STDERR.puts "but one could not be found"
-		# 	exit(65)
-		# end
-
-		# def exit_if_config_key_missing(key)
-		# 	return if @config_hash.key?(key)
-		# 	STDERR.puts "Looking in the config file for a key called #{key}"
-		# 	STDERR.puts "but none could be found"
-		# 	exit(66)
-		# end
-
-		# def exit_cloudroot_not_exist
-		# 	STDERR.puts "Looking for the cloudroot directory"
-		# 	STDERR.puts "at #{@cloudroot} but it could not be found"
-		# 	exit(67)
-		# end
-
-		# def exit_folder_target_not_exist(target)
-		# 	STDERR.puts "Looking for the target directory"
-		# 	STDERR.puts "at #{target} but it could not be found"
-		# 	exit(68)
-		# end
-
-		# def exit_if_folder_key_missing(key: ,hash:)
-		# 	return if hash.key?(key)
-		# 	STDERR.puts "Looking in the folder info for a key called #{key}"
-		# 	STDERR.puts "but none could be found"
-		# 	exit(69)
-		# end
 	end
-
-
 end
