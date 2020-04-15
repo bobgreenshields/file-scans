@@ -36,6 +36,11 @@ module FileScans
 			end
 		end
 
+		def write_tag_file(dir)
+			tag_file = dir + 'tag'
+			tag_file.write('') unless tag_file.exist?
+		end
+
 		def sync_dirs
 			STDERR.puts
 			folders do |folder|
@@ -46,6 +51,7 @@ module FileScans
 						STDERR.puts "Was going to make #{new_dir} in folder #{folder.name} but it already exists"
 					else
 						new_dir_path.mkpath
+						write_tag_file(new_dir_path)
 						STDERR.puts "Making #{new_dir} in folder #{folder.name}"
 					end
 				end
