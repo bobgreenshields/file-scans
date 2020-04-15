@@ -14,9 +14,11 @@ module FileScans
 		def read_config_from_file(path)
 			exit_rc_not_exist unless path.exist?
 			begin
-				YAML.load(path.read)
+				result = YAML.load(path.read)
+				exit_error_loading_yaml("The file returned nil from the yaml") if result.nil?
+				result
 			rescue StandardError => e
-				exit_error_loading_yaml(e)
+				exit_error_loading_yaml(e.message)
 			end
 			# {"hi" => "bob"}
 		end
@@ -53,11 +55,10 @@ module FileScans
 			exit(65)
 		end
 
-		def exit_error_loading_yaml(error)
+		def exit_error_loading_yaml(message)
 				STDERR.puts "There was a problem loading the config file"
 				STDERR.puts @path.to_s
 				STDERR.puts "It should be formatted in YAML"
-				STDERR.puts "It raised an error with the following message"
 				STDERR.puts error.message
 				exit(66)
 		end

@@ -115,6 +115,14 @@ describe RCFile do
 			]}
 			expect(rcf.read_config_from_file(c_file)).to eql(expected)
 		end
+		context 'when the config file is not correctly formatted' do
+			let(:c_file) { Pathname.new(__FILE__).dirname.expand_path + '../fixture/bad_config.yml' }
+			it 'exits if the yaml is badly formed' do
+				expect(rcf).to receive(:exit_error_loading_yaml)
+				result = rcf.read_config_from_file(c_file)
+				# expect(result).to eql({})
+			end
+		end
 	end
 
 end
