@@ -15,7 +15,8 @@ module FileScans
 		end
 
 		def cut_start
-			@folder.target.to_s.length + 1
+			# @folder.target.to_s.length + 1
+			@folder.target.to_s.length + 2
 		end
 
 		def cmd_str
