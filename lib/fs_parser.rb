@@ -1,4 +1,5 @@
 require 'optparse'
+require 'set'
 
 module FileScans
 	class FSParser
