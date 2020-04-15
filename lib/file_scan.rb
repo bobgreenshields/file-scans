@@ -5,6 +5,7 @@ require_relative 'scanner'
 require_relative 'new_dir_scanner'
 require_relative 'dir_builder'
 require_relative 'file_lister'
+require_relative 'file_mover'
 require_relative 'default_scan_formatter'
 
 module FileScans
@@ -91,6 +92,16 @@ module FileScans
 			end
 		end
 
+		def execute_from_user?
+			got_valid_response = false
+			until got_valid_response
+				print "[S]kip or [e]xecute? "
+				response = STDIN.gets.chomp.strip.downcase
+				got_valid_response = ["", "s", "e"].include?(response)
+			end
+			response == "e"
+		end
+
 		def move
 			STDERR.puts
 			formatter = @formatter.new
@@ -99,11 +110,39 @@ module FileScans
 				STDERR.puts "==== Scanning folder #{folder.name} ===="
 				sr = Scanner.new(folder).call
 				STDERR.puts formatter.call(sr)
-				sr.files do |file|
-					move_file(file_relative: file, source_dir: folder.path, target_dir: folder.target)
-					STDERR.puts "Moving #{file}"
+				STDERR.puts
+				unless execute_from_user?
+					STDERR.puts "Aborting this folder"
+					STDERR.puts 
+					next
 				end
+				get_file_mover(sr).call
 			end
+		end
+
+		def get_file_mover(scan_result)
+			FileMover.new(scan_result).tap do |mover|
+				mover.on_file_exist = lambda_file_exist
+				mover.on_file_move = lambda_file_move
+				mover.on_new_dir_exist = lambda_new_dir_exist
+				mover.on_new_dir_create = lambda_new_dir_create
+			end
+		end
+
+		def lambda_file_exist
+			->(file, target_file) { STDERR.puts "Looking to move #{file} but one already exists at #{target_file}" }
+		end
+
+		def lambda_file_move
+			->(file, target_file) { STDERR.puts "Moving #{file} to #{target_file}" }
+		end
+
+		def lambda_new_dir_exist
+			->(dir, target_dir) { STDERR.puts "Looking to make dir #{dir} but one already exists at #{target_dir}" }
+		end
+
+		def lambda_new_dir_create
+			->(dir, target_dir) { STDERR.puts "Making dir #{dir} at #{target_dir}" }
 		end
 
 		def move_file(file_relative: , source_dir: , target_dir: )
