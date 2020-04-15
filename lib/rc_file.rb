@@ -1,4 +1,5 @@
 require 'pathname'
+require 'yaml'
 
 module FileScans
 	class RCFile
@@ -7,16 +8,17 @@ module FileScans
 		end
 
 		def config_hash
-			@config_hash ||= read_config_from_file
+			@config_hash ||= read_config_from_file(@path)
 		end
 
-		def read_config_from_file
-			exit_rc_not_exist unless @path.exist?
+		def read_config_from_file(path)
+			exit_rc_not_exist unless path.exist?
 			begin
-				YAML.load(@path.read)
+				YAML.load(path.read)
 			rescue StandardError => e
 				exit_error_loading_yaml(e)
 			end
+			# {"hi" => "bob"}
 		end
 
 		def check_for_cloudroot

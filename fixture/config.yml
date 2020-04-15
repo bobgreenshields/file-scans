@@ -1,0 +1,7 @@
+---
+cloudroot: home/bobg/dev/file-scans/fixture
+folders:
+- name: builder
+  target: home/bobg/dev/file-scans/fixture/target
+- name: inv
+  target: home/bobg/dev/file-scans/fixture/target2

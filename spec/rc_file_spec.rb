@@ -1,4 +1,5 @@
 require_relative '../lib/rc_file'
+# require 'yaml'
 # require_relative '../lib/scan_result'
 # require_relative '../lib/folder'
 
@@ -99,7 +100,21 @@ describe RCFile do
 			end
 		end
 	end
-		
-	
-	
+
+	describe '#read_config_from_file' do
+		let(:c_file) { Pathname.new(__FILE__).dirname.expand_path + '../fixture/config.yml' }
+		let(:config) { {'this' => 'that' } }
+		it 'reads a config file into a hash' do
+			expect(rcf.read_config_from_file(c_file)).to be_a Hash
+		end
+		it 'populates the hash with values' do
+			expected = {"cloudroot"=>"home/bobg/dev/file-scans/fixture",
+							"folders"=>[
+							{"name"=>"builder", "target"=>"home/bobg/dev/file-scans/fixture/target"},
+							{"name"=>"inv", "target"=>"home/bobg/dev/file-scans/fixture/target2"}
+			]}
+			expect(rcf.read_config_from_file(c_file)).to eql(expected)
+		end
+	end
+
 end
