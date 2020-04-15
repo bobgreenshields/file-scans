@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+require_relative '../lib/file_scan'
+require_relative '../lib/rc_file'
+require_relative '../lib/fs_parser'
+require 'pathname'
+
+rcfile_path = Pathname.new(ENV['HOME']).expand_path + '.filescansrc'
+config_hash = FileScans::RCFile.new(rcfile_path).call
+options = FileScans::FSParser.new.call(ARGV)
+FileScans::FileScan.new(config_hash).call(options)
