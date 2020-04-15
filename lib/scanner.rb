@@ -21,7 +21,16 @@ module FileScans
 			@folder.target
 		end
 
+		def tagfile?(file)
+			# puts "checking #{file}"
+			# puts "basename = #{Pathname.new(file).basename}"
+			# result = Pathname.new(file).basename.to_s == 'tag' ? true : false
+			# puts result.to_s
+			Pathname.new(file).basename.to_s == 'tag'
+		end
+
 		def add_file(file)
+			return if tagfile?(file)
 			file_relative_path = file.relative_path_from(root).to_s
 			if target_file_exist?(file_relative_path)
 				@result.add_duplicate(file_relative_path)
