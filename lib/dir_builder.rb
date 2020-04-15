@@ -4,7 +4,7 @@ require_relative 'dir_explorer'
 
 module FileScans
 	class DirBuilder
-		def initialize(folder, tag_file_writer: -> (dir) {})
+		def initialize(folder, tag_file_writer: -> (dir) {} )
 			@folder = folder
 			@tag_file_writer = tag_file_writer
 			on_dir = ->(dir, context) { context.add_dir(dir) }

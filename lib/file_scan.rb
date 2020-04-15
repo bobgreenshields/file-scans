@@ -10,7 +10,7 @@ require_relative 'default_scan_formatter'
 
 module FileScans
 	class FileScan
-		def initialize(config_hash, tag_file_writer: -> (dir)
+		def initialize(config_hash, tag_file_writer: -> (dir) {} )
 			@config_hash = config_hash
 			@tag_file_writer = tag_file_writer
 			@folders = nil
