@@ -12,7 +12,7 @@ module FileScans
 
 		def write_tag_file(dir)
 			tag_file = dir + 'tag'
-			tag_file.write('') unless tag_file.exist?
+			tag_file.write('This is a tag file, please do NOT delete it') unless tag_file.exist?
 		end
 
 		def add_dir(dir)

@@ -38,7 +38,7 @@ module FileScans
 
 		def write_tag_file(dir)
 			tag_file = dir + 'tag'
-			tag_file.write('') unless tag_file.exist?
+			tag_file.write('This is a tag file, please do NOT delete it') unless tag_file.exist?
 		end
 
 		def sync_dirs
@@ -58,8 +58,7 @@ module FileScans
 			end
 		end
 
-		def rebuild_dirs
-			STDERR.puts
+		def rebuild_dirs STDERR.puts
 			folders do |folder|
 				if folder.path.exist?
 					if Scanner.new(folder).call.files?
