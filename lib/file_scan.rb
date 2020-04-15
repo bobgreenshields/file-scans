@@ -58,7 +58,8 @@ module FileScans
 			end
 		end
 
-		def rebuild_dirs STDERR.puts
+		def rebuild_dirs
+			STDERR.puts
 			folders do |folder|
 				if folder.path.exist?
 					if Scanner.new(folder).call.files?
