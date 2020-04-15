@@ -14,6 +14,7 @@ module FileScans
 				opts.on '-f', '--files', 'Make the file list text files' do @options << :files end
 				opts.on '-s', '--scan', 'Scan the cloud dirs for files and new dirs' do @options << :scan end
 				opts.on '-m', '--move', 'Scan the cloud dirs, move files and make new dirs' do @options << :move end
+				opts.on '-l', '--list', 'List all of the settings from the config file' do @options << :list_settings end
 				opts.on '-h', '--help', 'Prints this help' do puts @opt_parser; exit end
 			end
 			@opt_parser.banner = 'Usage: filescans [options]'

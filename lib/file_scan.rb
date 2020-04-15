@@ -30,7 +30,7 @@ module FileScans
 
 		def call(options)
 			options.delete(:scan) if options.include?(:move)
-			%i(files sync_dirs rebuild_dirs move scan).each do |method_name|
+			%i(files sync_dirs rebuild_dirs list_settings move scan).each do |method_name|
 				self.send(method_name) if options.include?(method_name)
 			end
 		end
@@ -115,6 +115,18 @@ module FileScans
 			raise RuntimeError,
 				"Wanting to move file to #{target_path} but it already exists!" \
 				if target_path.exist?
+		end
+
+		def list_settings
+			STDERR.puts "\n"
+			STDERR.puts "cloudroot is #{cloudroot}"
+			STDERR.puts "\n"
+			folders do |folder|
+				STDERR.puts "==== Folder #{folder.name} ===="
+				STDERR.puts "name is: #{folder.name}"
+				STDERR.puts "target is: #{folder.target}"
+				STDERR.puts "\n"
+			end
 		end
 
 		def load_folder(folder_hash)
