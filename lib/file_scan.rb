@@ -10,8 +10,9 @@ require_relative 'default_scan_formatter'
 
 module FileScans
 	class FileScan
-		def initialize(config_hash)
+		def initialize(config_hash, tag_file_writer: -> (dir)
 			@config_hash = config_hash
+			@tag_file_writer = tag_file_writer
 			@folders = nil
 			@cloudroot = nil
 			@formatter = DefaultScanFormatter
@@ -37,8 +38,9 @@ module FileScans
 		end
 
 		def write_tag_file(dir)
-			tag_file = dir + 'tag'
-			tag_file.write('This is a tag file, please do NOT delete it') unless tag_file.exist?
+			@tag_file_writer.call(dir)
+			# tag_file = dir + 'tag'
+			# tag_file.write('This is a tag file, please do NOT delete it') unless tag_file.exist?
 		end
 
 		def sync_dirs
