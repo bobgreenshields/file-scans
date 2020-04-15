@@ -11,6 +11,15 @@ module FileScans
 			@config_hash ||= read_config_from_file(@path)
 		end
 
+		def call
+			check_for_cloudroot
+			check_for_folders
+			check_folders_is_array
+			check_folders_is_array_of_hashes
+			check_folder_keys
+			config_hash
+		end
+
 		def read_config_from_file(path)
 			exit_rc_not_exist unless path.exist?
 			begin
