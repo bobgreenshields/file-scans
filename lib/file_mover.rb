@@ -31,7 +31,7 @@ module FileScans
 				if target_file.exist?
 					@on_file_exist.call(file, target_file.to_s)
 				else
-					FileUtils.mv(source, target_file)
+					FileUtils.mv(source_file, target_file)
 					# source_file.rename(target_file)
 					@on_file_move.call(file, target_file.to_s)
 				end
